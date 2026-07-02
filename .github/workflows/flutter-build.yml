@@ -126,19 +126,27 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Brand as Remote Desk (server, key, name, colors, logo text)
+      - name: Brand as Remote Desk (full - remove all RustDesk)
         shell: bash
         run: |
           f=libs/hbb_common/src/config.rs
           sed -i 's|pub const RENDEZVOUS_SERVERS: &\[&str\] = &\["rs-ny.rustdesk.com"\];|pub const RENDEZVOUS_SERVERS: \&[\&str] = \&["198.199.84.80"];|' "$f" 
           sed -i 's|pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";|pub const RS_PUB_KEY: \&str = "YmdpSO7gmPdkM8OVntrhdIOZaeBEodYFQXaXrMIEcRg=";|' "$f" 
           sed -i 's|RwLock::new("RustDesk".to_owned())|RwLock::new("RemoteDesk".to_owned())|' "$f" 
-          # Colores de marca (azul RustDesk -> rojo/naranja Remote Desk) en todo flutter/lib
+          # Colores azul -> rojo/naranja
           find flutter/lib -name '*.dart' -print0 | xargs -0 sed -i 's/0xFF0071FF/0xFFF0391F/g; s/0x770071FF/0x77F0391F/g; s/0xAA0071FF/0xAAF0391F/g; s/0xFF00B6F0/0xFFFF6A2E/g; s/0xFF2C8CFF/0xFFF0391F/g'
           sed -i 's/primary: Colors.blue,/primary: Color(0xFFF0391F),/' flutter/lib/common.dart
-          # Quitar "Powered by RustDesk" en todos los idiomas
-          find src/lang -name '*.rs' -print0 | xargs -0 sed -i '/powered_by_me/s/RustDesk/Remote Desk/g'
-          echo "== branding ==" ; grep -nE 'RENDEZVOUS_SERVERS:|RS_PUB_KEY:|RemoteDesk' "$f" | head ; grep -c '0xFFF0391F' flutter/lib/common.dart
+          # Quitar enlaces a rustdesk.com
+          find flutter/lib -name '*.dart' -print0 | xargs -0 sed -i 's|https://rustdesk.com/privacy.html|http://198.199.84.80|g; s|https://rustdesk.com/pricing|http://198.199.84.80|g; s|https://rustdesk.com|http://198.199.84.80|g'
+          # Caja Acerca de: copyright Purslane -> Remote Desk
+          sed -i 's|Purslane Tech Pte. Ltd.|Remote Desk|g' flutter/lib/desktop/pages/desktop_setting_page.dart
+          # Metadata del ejecutable (Runner.rc)
+          if [ -f flutter/windows/runner/Runner.rc ]; then sed -i 's|Purslane Tech Pte. Ltd.|Remote Desk|g; s|"RustDesk Remote Desktop"|"Remote Desk"|g; s|"ProductName", "RustDesk"|"ProductName", "Remote Desk"|g' flutter/windows/runner/Runner.rc; fi
+          # Metadata del instalador MSI
+          if [ -f res/msi/preprocess.py ]; then sed -i 's|Purslane Tech Pte. Ltd.|Remote Desk|g' res/msi/preprocess.py; fi
+          # Textos de idioma: Powered by, eslogan, tip de servidor
+          find src/lang -name '*.rs' -print0 | xargs -0 sed -i '/powered_by_me/s/RustDesk/Remote Desk/g; /Slogan_tip/s/, "[^"]*")/, "Remote Desk")/; /setup_server_tip/s/, "[^"]*")/, "")/'
+          echo "== branding done ==" ; grep -nE 'RENDEZVOUS_SERVERS:|RS_PUB_KEY:|RemoteDesk' "$f" | head ; echo "colores rojos:" $(grep -rc '0xFFF0391F' flutter/lib/common.dart)
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
