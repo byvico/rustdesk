@@ -86,6 +86,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
             delegate: SliverChildListDelegate([
           if (!bind.isCustomClient() && !isIOS)
             Obx(() => _buildUpdateUI(stateGlobal.updateUrl.value)),
+          _buildMyDeviceCard(),
           _buildRemoteIDTextField(),
         ])),
         SliverFillRemaining(
@@ -94,6 +95,43 @@ class _ConnectionPageState extends State<ConnectionPage> {
         )
       ],
     ).marginOnly(top: 2, left: 10, right: 10);
+  }
+
+  /// Tarjeta "Tu dirección" (Remotium) — muestra mi ID en la parte superior.
+  Widget _buildMyDeviceCard() {
+    final myId = gFFI.serverModel.serverId.text;
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0x241E90FF), Color(0x247B3CFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0x557B3CFF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(translate('Your Desktop'),
+              style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+          const SizedBox(height: 4),
+          Text(
+            myId,
+            style: const TextStyle(
+                color: Color(0xFF1E90FF),
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1),
+          ),
+          const SizedBox(height: 4),
+          Text(translate('Interactive Access'),
+              style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+        ],
+      ),
+    );
   }
 
   /// Callback for the connect button.
