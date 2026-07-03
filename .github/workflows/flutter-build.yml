@@ -142,6 +142,18 @@ jobs:
           [ -f flutter/windows/runner/Runner.rc ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g; s|"RustDesk Remotiumtop"|"Remotium"|g; s|"ProductName", "RustDesk"|"ProductName", "Remotium"|g' flutter/windows/runner/Runner.rc || true
           [ -f res/msi/preprocess.py ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' res/msi/preprocess.py || true
           find src/lang -name '*.rs' -print0 | xargs -0 sed -i '/powered_by_me/s/RustDesk/Remotium/g; /Slogan_tip/s/, "[^"]*")/, "Remotium")/'
+          # --- Android: nombre visible (app_name) + iconos del launcher (Remotium) ---
+          find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
+          if [ "$(uname -s)" = "Linux" ] && [ -f res/icon.png ] && command -v convert >/dev/null 2>&1; then
+            for spec in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+              dens=${spec%%:*}; lsz=${spec##*:}
+              dir=flutter/android/app/src/main/res/mipmap-$dens
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher.png" || true
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher_round.png" || true
+            done
+            rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml || true
+            echo "== android icons + name done =="
+          fi
           echo "== branding done ==" 
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -1047,6 +1059,18 @@ jobs:
           [ -f flutter/windows/runner/Runner.rc ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g; s|"RustDesk Remotiumtop"|"Remotium"|g; s|"ProductName", "RustDesk"|"ProductName", "Remotium"|g' flutter/windows/runner/Runner.rc || true
           [ -f res/msi/preprocess.py ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' res/msi/preprocess.py || true
           find src/lang -name '*.rs' -print0 | xargs -0 sed -i '/powered_by_me/s/RustDesk/Remotium/g; /Slogan_tip/s/, "[^"]*")/, "Remotium")/'
+          # --- Android: nombre visible (app_name) + iconos del launcher (Remotium) ---
+          find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
+          if [ "$(uname -s)" = "Linux" ] && [ -f res/icon.png ] && command -v convert >/dev/null 2>&1; then
+            for spec in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+              dens=${spec%%:*}; lsz=${spec##*:}
+              dir=flutter/android/app/src/main/res/mipmap-$dens
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher.png" || true
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher_round.png" || true
+            done
+            rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml || true
+            echo "== android icons + name done =="
+          fi
           echo "== branding done ==" 
 
       - name: Install flutter
@@ -1344,6 +1368,18 @@ jobs:
           [ -f flutter/windows/runner/Runner.rc ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g; s|"RustDesk Remotiumtop"|"Remotium"|g; s|"ProductName", "RustDesk"|"ProductName", "Remotium"|g' flutter/windows/runner/Runner.rc || true
           [ -f res/msi/preprocess.py ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' res/msi/preprocess.py || true
           find src/lang -name '*.rs' -print0 | xargs -0 sed -i '/powered_by_me/s/RustDesk/Remotium/g; /Slogan_tip/s/, "[^"]*")/, "Remotium")/'
+          # --- Android: nombre visible (app_name) + iconos del launcher (Remotium) ---
+          find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
+          if [ "$(uname -s)" = "Linux" ] && [ -f res/icon.png ] && command -v convert >/dev/null 2>&1; then
+            for spec in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+              dens=${spec%%:*}; lsz=${spec##*:}
+              dir=flutter/android/app/src/main/res/mipmap-$dens
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher.png" || true
+              convert res/icon.png -resize ${lsz}x${lsz} "$dir/ic_launcher_round.png" || true
+            done
+            rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml || true
+            echo "== android icons + name done =="
+          fi
           echo "== branding done ==" 
 
       - name: Install flutter
