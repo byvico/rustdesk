@@ -145,7 +145,7 @@ class _PeerCardState extends State<_PeerCard>
       children: [
         Container(
             decoration: BoxDecoration(
-              color: str2color('${peer.id}${peer.platform}', 0x7f),
+              gradient: LinearGradient(colors: [str2color('${peer.id}${peer.platform}', 0xcc), str2color('g${peer.id}${peer.platform}', 0xcc)], begin: Alignment.topLeft, end: Alignment.bottomRight),
               borderRadius: isPortrait
                   ? BorderRadius.circular(_tileRadius)
                   : BorderRadius.only(
@@ -303,7 +303,7 @@ class _PeerCardState extends State<_PeerCard>
               children: [
                 Expanded(
                   child: Container(
-                    color: str2color('${peer.id}${peer.platform}', 0x7f),
+                    decoration: BoxDecoration(gradient: LinearGradient(colors: [str2color('${peer.id}${peer.platform}', 0xdd), str2color('g${peer.id}${peer.platform}', 0xdd)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
                     child: Row(
                       children: [
                         Expanded(
