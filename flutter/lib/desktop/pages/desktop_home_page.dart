@@ -190,8 +190,18 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   buildIDBoard(BuildContext context) {
     final model = gFFI.serverModel;
     return Container(
-      margin: const EdgeInsets.only(left: 20, right: 11),
-      height: 57,
+      margin: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 66,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0x241E90FF), Color(0x247B3CFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0x557B3CFF)),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
