@@ -137,7 +137,7 @@ jobs:
           sed -i 's/primary: Colors.blue,/primary: Color(0xFF7B3CFF),/' flutter/lib/common.dart
           find flutter/lib -name '*.dart' -print0 | xargs -0 sed -i 's|rustdesk\.com|remotium.net|g'
           # Servidor de cuentas (api-server) por defecto = api.remotium.net -> habilita login Google en la app
-          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|' src/common.rs || true
+          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|; s|if Config::no_register_device() {|if Config::no_register_device() \&\& false {|' src/common.rs || true
           find src -name '*.rs' -print0 | xargs -0 sed -i 's|rustdesk.com|198.199.84.80|g'
           [ -f flutter/lib/desktop/pages/connection_page.dart ] && sed -i "s|translate('setup_server_tip')|''|g" flutter/lib/desktop/pages/connection_page.dart || true
           [ -f flutter/lib/desktop/pages/desktop_setting_page.dart ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' flutter/lib/desktop/pages/desktop_setting_page.dart || true
@@ -1056,7 +1056,7 @@ jobs:
           sed -i 's/primary: Colors.blue,/primary: Color(0xFF7B3CFF),/' flutter/lib/common.dart
           find flutter/lib -name '*.dart' -print0 | xargs -0 sed -i 's|rustdesk\.com|remotium.net|g'
           # Servidor de cuentas (api-server) por defecto = api.remotium.net -> habilita login Google en la app
-          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|' src/common.rs || true
+          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|; s|if Config::no_register_device() {|if Config::no_register_device() \&\& false {|' src/common.rs || true
           find src -name '*.rs' -print0 | xargs -0 sed -i 's|rustdesk.com|198.199.84.80|g'
           [ -f flutter/lib/desktop/pages/connection_page.dart ] && sed -i "s|translate('setup_server_tip')|''|g" flutter/lib/desktop/pages/connection_page.dart || true
           [ -f flutter/lib/desktop/pages/desktop_setting_page.dart ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' flutter/lib/desktop/pages/desktop_setting_page.dart || true
@@ -1366,7 +1366,7 @@ jobs:
           sed -i 's/primary: Colors.blue,/primary: Color(0xFF7B3CFF),/' flutter/lib/common.dart
           find flutter/lib -name '*.dart' -print0 | xargs -0 sed -i 's|rustdesk\.com|remotium.net|g'
           # Servidor de cuentas (api-server) por defecto = api.remotium.net -> habilita login Google en la app
-          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|' src/common.rs || true
+          [ -f src/common.rs ] && sed -i 's|admin.rustdesk.com|api.remotium.net|g; s|let s0 = get_custom_rendezvous_server(custom);|let _ = custom; let s0 = String::new();|; s|if Config::no_register_device() {|if Config::no_register_device() \&\& false {|' src/common.rs || true
           find src -name '*.rs' -print0 | xargs -0 sed -i 's|rustdesk.com|198.199.84.80|g'
           [ -f flutter/lib/desktop/pages/connection_page.dart ] && sed -i "s|translate('setup_server_tip')|''|g" flutter/lib/desktop/pages/connection_page.dart || true
           [ -f flutter/lib/desktop/pages/desktop_setting_page.dart ] && sed -i 's|Purslane Tech Pte. Ltd.|Remotium|g' flutter/lib/desktop/pages/desktop_setting_page.dart || true
