@@ -146,6 +146,12 @@ jobs:
           find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
           sed -i 's|android:label="RustDesk"|android:label="Remotium"|g; s|android:label="RustDesk Input"|android:label="Remotium Input"|g' flutter/android/app/src/main/AndroidManifest.xml 2>/dev/null || true
           rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml 2>/dev/null || true
+          # Notificacion Android (Kotlin): titulo/canal RustDesk -> Remotium
+          MSVC=flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/MainService.kt
+          [ -f "$MSVC" ] && sed -i 's|DEFAULT_NOTIFY_TITLE = "RustDesk"|DEFAULT_NOTIFY_TITLE = "Remotium"|g; s|"RustDesk Service Channel"|"Remotium Service Channel"|g; s|"RustDesk Service"|"Remotium Service"|g; s|"RustDeskVD"|"RemotiumVD"|g' "$MSVC" 2>/dev/null || true
+          # Desactivar aviso de estafa (va directo a iniciar el servicio)
+          SPG=flutter/lib/mobile/pages/server_page.dart
+          [ -f "$SPG" ] && sed -i 's|showScamWarning(context, serverModel);|serverModel.toggleService();|g' "$SPG" 2>/dev/null || true
           echo "== android brand (label+iconos+rustdesk.com) done =="
           echo "== branding done ==" 
       - name: Restore bridge files
@@ -1057,6 +1063,12 @@ jobs:
           find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
           sed -i 's|android:label="RustDesk"|android:label="Remotium"|g; s|android:label="RustDesk Input"|android:label="Remotium Input"|g' flutter/android/app/src/main/AndroidManifest.xml 2>/dev/null || true
           rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml 2>/dev/null || true
+          # Notificacion Android (Kotlin): titulo/canal RustDesk -> Remotium
+          MSVC=flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/MainService.kt
+          [ -f "$MSVC" ] && sed -i 's|DEFAULT_NOTIFY_TITLE = "RustDesk"|DEFAULT_NOTIFY_TITLE = "Remotium"|g; s|"RustDesk Service Channel"|"Remotium Service Channel"|g; s|"RustDesk Service"|"Remotium Service"|g; s|"RustDeskVD"|"RemotiumVD"|g' "$MSVC" 2>/dev/null || true
+          # Desactivar aviso de estafa (va directo a iniciar el servicio)
+          SPG=flutter/lib/mobile/pages/server_page.dart
+          [ -f "$SPG" ] && sed -i 's|showScamWarning(context, serverModel);|serverModel.toggleService();|g' "$SPG" 2>/dev/null || true
           echo "== android brand (label+iconos+rustdesk.com) done =="
           echo "== branding done ==" 
 
@@ -1359,6 +1371,12 @@ jobs:
           find flutter/android -name 'strings.xml' -print0 | xargs -0 sed -i 's|>RustDesk<|>Remotium<|g; s|RustDesk screen sharing|Remotium screen sharing|g' 2>/dev/null || true
           sed -i 's|android:label="RustDesk"|android:label="Remotium"|g; s|android:label="RustDesk Input"|android:label="Remotium Input"|g' flutter/android/app/src/main/AndroidManifest.xml 2>/dev/null || true
           rm -f flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml flutter/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml 2>/dev/null || true
+          # Notificacion Android (Kotlin): titulo/canal RustDesk -> Remotium
+          MSVC=flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/MainService.kt
+          [ -f "$MSVC" ] && sed -i 's|DEFAULT_NOTIFY_TITLE = "RustDesk"|DEFAULT_NOTIFY_TITLE = "Remotium"|g; s|"RustDesk Service Channel"|"Remotium Service Channel"|g; s|"RustDesk Service"|"Remotium Service"|g; s|"RustDeskVD"|"RemotiumVD"|g' "$MSVC" 2>/dev/null || true
+          # Desactivar aviso de estafa (va directo a iniciar el servicio)
+          SPG=flutter/lib/mobile/pages/server_page.dart
+          [ -f "$SPG" ] && sed -i 's|showScamWarning(context, serverModel);|serverModel.toggleService();|g' "$SPG" 2>/dev/null || true
           echo "== android brand (label+iconos+rustdesk.com) done =="
           echo "== branding done ==" 
 
