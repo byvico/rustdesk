@@ -99,7 +99,6 @@ class _ConnectionPageState extends State<ConnectionPage> {
 
   /// Tarjeta "Tu dirección" (Remotium) — muestra mi ID en la parte superior.
   Widget _buildMyDeviceCard() {
-    final myId = gFFI.serverModel.serverId.text;
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 6),
       padding: const EdgeInsets.all(16),
@@ -118,13 +117,16 @@ class _ConnectionPageState extends State<ConnectionPage> {
           Text(translate('Your Desktop'),
               style: TextStyle(color: Colors.grey[400], fontSize: 13)),
           const SizedBox(height: 4),
-          Text(
-            myId,
-            style: const TextStyle(
-                color: Color(0xFF1E90FF),
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1),
+          AnimatedBuilder(
+            animation: gFFI.serverModel.serverId,
+            builder: (context, child) => Text(
+              gFFI.serverModel.serverId.text,
+              style: const TextStyle(
+                  color: Color(0xFF1E90FF),
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1),
+            ),
           ),
           const SizedBox(height: 4),
           Text(translate('Interactive Access'),
