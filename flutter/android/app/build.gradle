@@ -97,7 +97,9 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.carriez.flutter_hbb"
+        // Remotium: ID de paquete de marca para Play Store (el namespace de codigo
+        // sigue siendo com.carriez.flutter_hbb, no afecta al JNI/FFI).
+        applicationId "net.remotium.app"
         minSdkVersion 22
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
