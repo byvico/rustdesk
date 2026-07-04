@@ -19,13 +19,18 @@ subprojects {
 // `namespace` in their build file, which AGP 8 rejects. Inject a namespace
 // from the plugin's manifest package so the build can configure them.
 subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty('android') && project.android.namespace == null) {
-            def am = new File(project.projectDir, 'src/main/AndroidManifest.xml')
-            if (am.exists()) {
-                def pkg = new groovy.util.XmlSlurper().parse(am).@package.text()
-                if (pkg?.trim()) {
-                    project.android.namespace = pkg.trim()
+    // Only register on projects not yet evaluated; evaluationDependsOn(':app')
+    // above can evaluate some projects eagerly, and afterEvaluate() throws if
+    // the project is already evaluated.
+    if (!project.state.executed) {
+        project.afterEvaluate { p ->
+            if (p.hasProperty('android') && p.android.namespace == null) {
+                def am = new File(p.projectDir, 'src/main/AndroidManifest.xml')
+                if (am.exists()) {
+                    def pkg = new groovy.util.XmlSlurper().parse(am).@package.text()
+                    if (pkg?.trim()) {
+                        p.android.namespace = pkg.trim()
+                    }
                 }
             }
         }
