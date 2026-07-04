@@ -119,14 +119,38 @@ class _ConnectionPageState extends State<ConnectionPage> {
           const SizedBox(height: 4),
           AnimatedBuilder(
             animation: gFFI.serverModel.serverId,
-            builder: (context, child) => Text(
-              gFFI.serverModel.serverId.text,
-              style: const TextStyle(
-                  color: Color(0xFF1E90FF),
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1),
-            ),
+            builder: (context, child) {
+              final id = gFFI.serverModel.serverId.text.trim();
+              final ready = RegExp(r'\d').hasMatch(id);
+              if (ready) {
+                return Text(
+                  id,
+                  style: const TextStyle(
+                      color: Color(0xFF1E90FF),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1),
+                );
+              }
+              return Row(
+                children: [
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Color(0xFF7B3CFF)),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    translate('Generating ...'),
+                    style: TextStyle(
+                        color: Colors.grey[300],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 4),
           Text(translate('Interactive Access'),
