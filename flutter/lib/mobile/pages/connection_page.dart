@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hbb/common/formatter/id_formatter.dart';
 import 'package:flutter_hbb/common/widgets/connection_page_title.dart';
 import 'package:flutter_hbb/models/state_model.dart';
@@ -114,7 +115,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(translate('Your Desktop'),
+          Text('Tu dirección',
               style: TextStyle(color: Colors.grey[400], fontSize: 13)),
           const SizedBox(height: 4),
           AnimatedBuilder(
@@ -152,9 +153,30 @@ class _ConnectionPageState extends State<ConnectionPage> {
               );
             },
           ),
-          const SizedBox(height: 4),
-          Text(translate('Interactive Access'),
-              style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+          const SizedBox(height: 12),
+          Builder(builder: (context) {
+            void copyId() {
+              final id = gFFI.serverModel.serverId.text.trim();
+              if (RegExp(r'\d').hasMatch(id)) {
+                Clipboard.setData(ClipboardData(text: id));
+                showToast(translate('Copied'));
+              }
+            }
+
+            Widget act(IconData ic) => InkWell(
+                  onTap: copyId,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(ic, color: Colors.grey[400], size: 22),
+                  ),
+                );
+            return Row(children: [
+              act(Icons.ios_share),
+              const SizedBox(width: 14),
+              act(Icons.content_copy),
+            ]);
+          }),
         ],
       ),
     );

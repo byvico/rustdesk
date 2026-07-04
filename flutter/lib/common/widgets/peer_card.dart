@@ -315,9 +315,15 @@ class _PeerCardState extends State<_PeerCard>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(6),
-                                child:
-                                    getPlatformImage(peer.platform, size: 60),
+                                width: 64,
+                                height: 40,
+                                margin: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.14),
+                                  border: Border.all(
+                                      color: Colors.white.withOpacity(0.22)),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                               ),
                               Row(
                                 children: [
@@ -328,8 +334,9 @@ class _PeerCardState extends State<_PeerCard>
                                       child: Text(
                                         name,
                                         style: const TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 12),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13),
                                         textAlign: TextAlign.center,
                                         overflow: TextOverflow.ellipsis,
                                       ),

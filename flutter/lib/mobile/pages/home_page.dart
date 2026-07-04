@@ -75,7 +75,8 @@ class HomePageState extends State<HomePage> {
         child: Scaffold(
           // backgroundColor: MyTheme.grayBg,
           appBar: AppBar(
-            centerTitle: true,
+            centerTitle: false,
+            titleSpacing: 16,
             title: appTitle(),
             actions: _pages.elementAt(_selectedIndex).appBarActions,
           ),
@@ -151,7 +152,28 @@ class HomePageState extends State<HomePage> {
         ],
       );
     }
-    return Text(bind.mainGetAppNameSync());
+    // Remotium: logo + nombre en gradiente, alineado a la izquierda (como el mockup).
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset('assets/icon.png', width: 30, height: 30),
+        const SizedBox(width: 10),
+        ShaderMask(
+          shaderCallback: (b) => const LinearGradient(
+            colors: [Color(0xFF1E90FF), Color(0xFF7B3CFF)],
+          ).createShader(b),
+          child: Text(
+            bind.mainGetAppNameSync(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 21,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

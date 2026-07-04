@@ -12,6 +12,7 @@ import 'package:flutter_hbb/consts.dart';
 import 'package:flutter_hbb/desktop/pages/connection_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_setting_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
+import 'package:flutter_hbb/models/peer_tab_model.dart';
 import 'package:flutter_hbb/desktop/widgets/update_progress.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/server_model.dart';
@@ -74,6 +75,13 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   // Barra lateral Remotium (rediseño).
   Widget _buildSidebar(BuildContext context) {
+    void goTab(int idx) {
+      final m = gFFI.peerTabModel;
+      if (m.visibleEnabledOrderedIndexs.contains(idx)) {
+        m.setCurrentTab(idx);
+      }
+    }
+
     return Container(
       width: 60,
       decoration: const BoxDecoration(
@@ -81,32 +89,58 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         border: Border(right: BorderSide(color: Color(0xFF1E293B))),
       ),
       padding: const EdgeInsets.only(top: 14),
-      child: Column(children: [
-        _sideNav(Icons.desktop_windows_outlined, true),
-        _sideNav(Icons.star_border, false),
-        _sideNav(Icons.access_time, false),
-        _sideNav(Icons.contacts_outlined, false),
-        _sideNav(Icons.settings_outlined, false),
-      ]),
+      child: AnimatedBuilder(
+        animation: gFFI.peerTabModel,
+        builder: (context, _) {
+          final cur = gFFI.peerTabModel.currentTab;
+          return Column(children: [
+            _sideNav(Icons.desktop_windows_outlined,
+                cur == PeerTabIndex.recent.index, translate('Recent sessions'),
+                () => goTab(PeerTabIndex.recent.index)),
+            _sideNav(Icons.star_border, cur == PeerTabIndex.fav.index,
+                translate('Favorites'), () => goTab(PeerTabIndex.fav.index)),
+            _sideNav(Icons.access_time, false, translate('Recent sessions'),
+                () => goTab(PeerTabIndex.recent.index)),
+            _sideNav(Icons.contacts_outlined, cur == PeerTabIndex.ab.index,
+                translate('Address book'), () => goTab(PeerTabIndex.ab.index)),
+            _sideNav(Icons.settings_outlined, false, translate('Settings'),
+                () => DesktopTabPage.onAddSetting()),
+          ]);
+        },
+      ),
     );
   }
 
-  Widget _sideNav(IconData icon, bool on) {
-    return Container(
-      width: 42,
-      height: 42,
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        gradient: on
-            ? const LinearGradient(
-                colors: [Color(0xFF1E90FF), Color(0xFF5A1DDB)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight)
-            : null,
-        borderRadius: BorderRadius.circular(11),
+  Widget _sideNav(
+      IconData icon, bool on, String tooltip, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Tooltip(
+        message: tooltip,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(11),
+            onTap: onTap,
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                gradient: on
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1E90FF), Color(0xFF5A1DDB)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight)
+                    : null,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Icon(icon,
+                  color: on ? Colors.white : const Color(0xFF94A3B8),
+                  size: 21),
+            ),
+          ),
+        ),
       ),
-      child: Icon(icon,
-          color: on ? Colors.white : const Color(0xFF94A3B8), size: 21),
     );
   }
 
