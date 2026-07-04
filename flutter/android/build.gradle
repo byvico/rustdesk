@@ -24,12 +24,27 @@ subprojects {
     // the project is already evaluated.
     if (!project.state.executed) {
         project.afterEvaluate { p ->
-            if (p.hasProperty('android') && p.android.namespace == null) {
-                def am = new File(p.projectDir, 'src/main/AndroidManifest.xml')
-                if (am.exists()) {
-                    def pkg = new groovy.util.XmlSlurper().parse(am).@package.text()
-                    if (pkg?.trim()) {
-                        p.android.namespace = pkg.trim()
+            if (p.hasProperty('android')) {
+                // AGP 8 requires an explicit namespace; legacy plugins (e.g.
+                // external_path) only declare it via the manifest package.
+                if (p.android.namespace == null) {
+                    def am = new File(p.projectDir, 'src/main/AndroidManifest.xml')
+                    if (am.exists()) {
+                        def pkg = new groovy.util.XmlSlurper().parse(am).@package.text()
+                        if (pkg?.trim()) {
+                            p.android.namespace = pkg.trim()
+                        }
+                    }
+                }
+                // Keep Java and Kotlin JVM targets consistent (17) under AGP 8:
+                // legacy plugins default Java to 1.8 while Kotlin resolves to 17.
+                p.android.compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+                p.tasks.configureEach { t ->
+                    if (t.class.name.contains('KotlinCompile') && t.hasProperty('kotlinOptions')) {
+                        t.kotlinOptions.jvmTarget = '17'
                     }
                 }
             }
