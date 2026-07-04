@@ -355,7 +355,7 @@ class ServerModel with ChangeNotifier {
       if (parent.target != null) {
         /// the result of toggle-on depends on user actions in the settings page.
         /// handle result, see [ServerModel.changeStatue]
-        showInputWarnAlert(parent.target!);
+        showAccessibilityDisclosure(parent.target!);
       }
     }
   }
@@ -906,6 +906,41 @@ class Client {
 
 String getLoginDialogTag(int id) {
   return kLoginDialogTag + id.toString();
+}
+
+// Prominent disclosure + consent shown BEFORE opening Android accessibility
+// settings, as required by Google Play's Accessibility API / User Data policy.
+showAccessibilityDisclosure(FFI ffi) {
+  ffi.dialogManager.show((setState, close, context) {
+    proceed() {
+      close();
+      AndroidPermissionManager.startAction(kActionAccessibilitySettings);
+    }
+
+    return CustomAlertDialog(
+      title: Text(translate("accessibility_disclosure_title")),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(translate("accessibility_disclosure_why")),
+            const SizedBox(height: 12),
+            Text(translate("accessibility_disclosure_what")),
+            const SizedBox(height: 12),
+            Text(translate("accessibility_disclosure_how")),
+            const SizedBox(height: 12),
+            Text(translate("accessibility_disclosure_action")),
+          ],
+        ),
+      ),
+      actions: [
+        dialogButton("Cancel", onPressed: close, isOutline: true),
+        dialogButton("Accept", onPressed: proceed),
+      ],
+      onCancel: close,
+    );
+  });
 }
 
 showInputWarnAlert(FFI ffi) {
