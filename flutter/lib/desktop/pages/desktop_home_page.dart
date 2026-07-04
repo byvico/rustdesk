@@ -64,11 +64,50 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildSidebar(context),
         buildLeftPane(context),
         if (!isIncomingOnly) const VerticalDivider(width: 1),
         if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
       ],
     ));
+  }
+
+  // Barra lateral Remotium (rediseño).
+  Widget _buildSidebar(BuildContext context) {
+    return Container(
+      width: 60,
+      decoration: const BoxDecoration(
+        color: Color(0x66121826),
+        border: Border(right: BorderSide(color: Color(0xFF1E293B))),
+      ),
+      padding: const EdgeInsets.only(top: 14),
+      child: Column(children: [
+        _sideNav(Icons.desktop_windows_outlined, true),
+        _sideNav(Icons.star_border, false),
+        _sideNav(Icons.access_time, false),
+        _sideNav(Icons.contacts_outlined, false),
+        _sideNav(Icons.settings_outlined, false),
+      ]),
+    );
+  }
+
+  Widget _sideNav(IconData icon, bool on) {
+    return Container(
+      width: 42,
+      height: 42,
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        gradient: on
+            ? const LinearGradient(
+                colors: [Color(0xFF1E90FF), Color(0xFF5A1DDB)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight)
+            : null,
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: Icon(icon,
+          color: on ? Colors.white : const Color(0xFF94A3B8), size: 21),
+    );
   }
 
   Widget _buildBlock({required Widget child}) {
