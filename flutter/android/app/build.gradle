@@ -82,7 +82,18 @@ protobuf {
 }
 
 android {
-    compileSdkVersion 34
+    namespace "com.carriez.flutter_hbb"
+    compileSdk 35
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
 
@@ -91,8 +102,12 @@ android {
     }
 
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -101,7 +116,7 @@ android {
         // sigue siendo com.carriez.flutter_hbb, no afecta al JNI/FFI).
         applicationId "net.remotium.app"
         minSdkVersion 22
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
