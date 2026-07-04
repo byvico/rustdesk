@@ -741,15 +741,16 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       children: [
         Container(
           margin: EdgeInsets.fromLTRB(
-              0, marginTop, 0, bind.isIncomingOnly() ? marginTop : 0),
+              12, marginTop, 12, bind.isIncomingOnly() ? marginTop : 0),
           child: Container(
               decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
                   gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
                 colors: [
-                  Color.fromARGB(255, 226, 66, 188),
-                  Color.fromARGB(255, 244, 114, 124),
+                  Color(0xFF1E90FF),
+                  Color(0xFF7B3CFF),
                 ],
               )),
               padding: EdgeInsets.all(20),
