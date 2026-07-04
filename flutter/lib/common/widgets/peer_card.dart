@@ -82,13 +82,17 @@ class _PeerCardState extends State<_PeerCard>
 
   Widget _buildPortrait() {
     final peer = super.widget.peer;
-    return Card(
-        margin: EdgeInsets.symmetric(horizontal: 2),
-        child: gestureDetector(
-          child: Container(
-              padding: EdgeInsets.only(left: 12, top: 8, bottom: 8),
-              child: _buildPeerTile(context, peer, null)),
-        ));
+    // Remotium: en el móvil mostramos las tarjetas tipo cuadrícula (mockup),
+    // con carátula degradada. La tarjeta es responsive y llena su celda.
+    var deco = Rx<BoxDecoration?>(
+      BoxDecoration(
+        border: Border.all(color: Colors.transparent, width: _borderWidth),
+        borderRadius: BorderRadius.circular(_cardRadius),
+      ),
+    );
+    return gestureDetector(
+      child: _buildPeerCard(context, peer, deco),
+    );
   }
 
   Widget _buildLandscape() {

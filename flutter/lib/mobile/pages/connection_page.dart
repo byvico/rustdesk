@@ -218,14 +218,20 @@ class _ConnectionPageState extends State<ConnectionPage> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
         child: Ink(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.all(Radius.circular(13)),
+            color: const Color(0xFF0B111E),
+            borderRadius: const BorderRadius.all(Radius.circular(14)),
+            border: Border.all(color: const Color(0xFF1E293B)),
           ),
           child: Row(
             children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.only(left: 14),
+                child: Icon(Icons.desktop_windows_outlined,
+                    color: Color(0xFF94A3B8), size: 22),
+              ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  padding: const EdgeInsets.only(left: 12, right: 16),
                   child: RawAutocomplete<Peer>(
                     optionsBuilder: (TextEditingValue textEditingValue) {
                       if (textEditingValue.text == '') {
@@ -398,13 +404,28 @@ class _ConnectionPageState extends State<ConnectionPage> {
                         },
                         icon: Icon(Icons.clear, color: MyTheme.darkGray)),
                   )),
-              SizedBox(
-                width: 60,
-                height: 60,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_forward,
-                      color: MyTheme.darkGray, size: 45),
-                  onPressed: onConnect,
+              Padding(
+                padding: const EdgeInsets.only(right: 10, left: 4),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(11),
+                    onTap: onConnect,
+                    child: Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1E90FF), Color(0xFF7B3CFF)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      child: const Icon(Icons.arrow_forward,
+                          color: Colors.white, size: 24),
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -264,11 +264,18 @@ class _PeersViewState extends State<_PeersView>
             // Continious rebuilds of `ListView.builder` will cause memory leak.
             // Simple demo can reproduce this issue.
             final Widget child = Obx(() => stateGlobal.isPortrait.isTrue
-                ? ListView.builder(
+                ? GridView.builder(
+                    padding: EdgeInsets.only(bottom: space),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.1,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                    ),
                     itemCount: peers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return buildOnePeer(peers[index], true).marginOnly(
-                          top: index == 0 ? 0 : space / 2, bottom: space / 2);
+                      return buildOnePeer(peers[index], true);
                     },
                   )
                 : peerCardUiType.value == PeerUiType.list
