@@ -52,6 +52,9 @@ class _ConnectionPageState extends State<ConnectionPage> {
   // https://github.com/flutter/flutter/issues/157244
   Iterable<Peer> _autocompleteOpts = [];
 
+  // Remotium: refresca el ID propio para que aparezca pronto sin ir a Ajustes.
+  Timer? _idRefreshTimer;
+
   _ConnectionPageState() {
     if (!isWeb) _uniLinksSubscription = listenUniLinks();
     _idController.addListener(() {
@@ -76,6 +79,10 @@ class _ConnectionPageState extends State<ConnectionPage> {
       });
     }
     Get.put<TextEditingController>(_idEditingController);
+    // Remotium: sondea el ID cada 1s; fetchID notifica al AnimatedBuilder cuando llega.
+    _idRefreshTimer = periodic_immediate(const Duration(seconds: 1), () async {
+      await gFFI.serverModel.fetchID();
+    });
   }
 
   @override
@@ -468,6 +475,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
 
   @override
   void dispose() {
+    _idRefreshTimer?.cancel();
     _uniLinksSubscription?.cancel();
     _idController.dispose();
     _idFocusNode.removeListener(onFocusChanged);

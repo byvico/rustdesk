@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hbb/common/shared_state.dart';
+import 'package:flutter_hbb/common/widgets/peer_thumbnail.dart';
 import 'package:flutter_hbb/common/widgets/toolbar.dart';
 import 'package:flutter_hbb/consts.dart';
 import 'package:flutter_hbb/mobile/widgets/floating_mouse.dart';
@@ -115,6 +116,11 @@ class _RemotePageState extends State<RemotePage> with WidgetsBindingObserver {
         .changeCurrentKey(MessageKey(widget.id, ChatModel.clientModeID));
     _blockableOverlayState.applyFfi(gFFI);
     gFFI.imageModel.addCallbackOnFirstImage((String peerId) {
+      // Remotium: guarda miniatura de la pantalla remota para la cuadricula.
+      Future.delayed(const Duration(milliseconds: 800), () {
+        final img = gFFI.imageModel.image;
+        if (img != null) saveThumbnailFromImage(peerId, img);
+      });
       gFFI.recordingModel
           .updateStatus(bind.sessionGetIsRecording(sessionId: gFFI.sessionId));
       if (gFFI.recordingModel.start) {

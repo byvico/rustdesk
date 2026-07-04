@@ -195,6 +195,232 @@ class ConnectionPage extends StatefulWidget {
   State<ConnectionPage> createState() => _ConnectionPageState();
 }
 
+/// Remotium: tarjeta "Conectar a un equipo remoto" del mockup (home de escritorio).
+/// Autonoma: registra Get<IDTextEditingController>/<TextEditingController> y el
+/// WindowListener (cierre de ventana), reemplazando a ConnectionPage en el flujo normal.
+class ConnectIdCard extends StatefulWidget {
+  const ConnectIdCard({Key? key}) : super(key: key);
+
+  @override
+  State<ConnectIdCard> createState() => _ConnectIdCardState();
+}
+
+class _ConnectIdCardState extends State<ConnectIdCard> with WindowListener {
+  final _idController = IDTextEditingController();
+  final TextEditingController _idEditingController = TextEditingController();
+  final FocusNode _idFocusNode = FocusNode();
+  bool isWindowMinimized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_idController.text.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final lastRemoteId = await bind.mainGetLastRemoteId();
+        if (lastRemoteId != _idController.id) {
+          setState(() {
+            _idController.id = lastRemoteId;
+            _idEditingController.text = _idController.text;
+          });
+        }
+      });
+    }
+    Get.put<TextEditingController>(_idEditingController);
+    Get.put<IDTextEditingController>(_idController);
+    windowManager.addListener(this);
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    windowManager.removeListener(this);
+    _idFocusNode.dispose();
+    _idEditingController.dispose();
+    if (Get.isRegistered<IDTextEditingController>()) {
+      Get.delete<IDTextEditingController>();
+    }
+    if (Get.isRegistered<TextEditingController>()) {
+      Get.delete<TextEditingController>();
+    }
+    super.dispose();
+  }
+
+  @override
+  void onWindowEvent(String eventName) {
+    super.onWindowEvent(eventName);
+    if (eventName == 'minimize') {
+      isWindowMinimized = true;
+    } else if (eventName == 'maximize' || eventName == 'restore') {
+      if (isWindowMinimized && isWindows) {
+        Get.forceAppUpdate();
+      }
+      isWindowMinimized = false;
+    }
+  }
+
+  @override
+  void onWindowEnterFullScreen() {
+    stateGlobal.resizeEdgeSize.value = 0;
+  }
+
+  @override
+  void onWindowLeaveFullScreen() {
+    stateGlobal.resizeEdgeSize.value = stateGlobal.isMaximized.isTrue
+        ? kMaximizeEdgeSize
+        : windowResizeEdgeSize;
+  }
+
+  @override
+  void onWindowClose() {
+    super.onWindowClose();
+    bind.mainOnMainWindowClose();
+  }
+
+  void onConnect(
+      {bool isFileTransfer = false,
+      bool isViewCamera = false,
+      bool isTerminal = false}) {
+    final id = _idController.id;
+    connect(context, id,
+        isFileTransfer: isFileTransfer,
+        isViewCamera: isViewCamera,
+        isTerminal: isTerminal);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final labelColor =
+        Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.6);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0x0AFFFFFF),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0x1FFFFFFF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Conectar a un equipo remoto',
+              style: TextStyle(fontSize: 13, color: labelColor)),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0B111E),
+                    borderRadius: BorderRadius.circular(11),
+                    border: Border.all(color: const Color(0xFF1E293B)),
+                  ),
+                  child: TextField(
+                    controller: _idEditingController,
+                    focusNode: _idFocusNode,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    keyboardType: TextInputType.visiblePassword,
+                    style: const TextStyle(fontFamily: 'WorkSans', fontSize: 18),
+                    maxLines: 1,
+                    inputFormatters: [IDTextInputFormatter()],
+                    decoration: InputDecoration(
+                      filled: false,
+                      border: InputBorder.none,
+                      hintText: translate('Enter Remote ID'),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 14),
+                    ),
+                    onChanged: (v) {
+                      _idController.id = v;
+                    },
+                    onSubmitted: (_) {
+                      onConnect();
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(11),
+                  onTap: () => onConnect(),
+                  child: Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                          colors: [Color(0xFF1E90FF), Color(0xFF7B3CFF)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight),
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.arrow_forward,
+                          color: Colors.white, size: 18),
+                      const SizedBox(width: 7),
+                      Text(translate('Connect'),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15)),
+                    ]),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Consejo: pide el ID a la persona que quieres ayudar.',
+              style: TextStyle(fontSize: 12, color: labelColor)),
+          const SizedBox(height: 16),
+          Container(height: 1, color: const Color(0xFF1E293B)),
+          const SizedBox(height: 14),
+          Text('ACCESO RÁPIDO',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: labelColor)),
+          const SizedBox(height: 10),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            _quickChip(Icons.upload_file, translate('Transfer file'),
+                () => onConnect(isFileTransfer: true)),
+            _quickChip(Icons.videocam_outlined, translate('View camera'),
+                () => onConnect(isViewCamera: true)),
+            _quickChip(Icons.terminal, translate('Terminal'),
+                () => onConnect(isTerminal: true)),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickChip(IconData ic, String label, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(9),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0x0AFFFFFF),
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(color: const Color(0xFF1E293B)),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(ic, size: 15, color: const Color(0xFF94A3B8)),
+            const SizedBox(width: 6),
+            Text(label,
+                style: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 12)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
 /// State for the connection page.
 class _ConnectionPageState extends State<ConnectionPage>
     with SingleTickerProviderStateMixin, WindowListener {

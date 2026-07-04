@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_hbb/models/state_model.dart';
+import 'package:flutter_hbb/common/widgets/peer_thumbnail.dart';
 
 import '../../consts.dart';
 import '../../common/widgets/overlay.dart';
@@ -124,6 +125,12 @@ class _RemotePageState extends State<RemotePage>
     _ffi = FFI(widget.sessionId);
     Get.put<FFI>(_ffi, tag: widget.id);
     _ffi.imageModel.addCallbackOnFirstImage((String peerId) {
+      // Remotium: guarda miniatura de la pantalla remota (si hay ui.Image; en
+      // escritorio con texture-render sera null y se usa el gradiente).
+      Future.delayed(const Duration(milliseconds: 800), () {
+        final img = _ffi.imageModel.image;
+        if (img != null) saveThumbnailFromImage(peerId, img);
+      });
       _ffi.canvasModel.activateLocalCursor();
       showKBLayoutTypeChooserIfNeeded(
           _ffi.ffiModel.pi.platform, _ffi.dialogManager);

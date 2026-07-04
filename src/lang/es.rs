@@ -649,7 +649,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Upload files", "Subir archivos"),
         ("Clipboard is synchronized", "Portapapeles sincronizado"),
         ("Update client clipboard", "Actualizar portapapeles del cliente"),
-        ("Untagged", "Sin itiquetar"),
+        ("Untagged", "Sin etiquetar"),
         ("new-version-of-{}-tip", "Hay una nueva versión de {} disponible"),
         ("Accessible devices", "Dispositivos accesibles"),
         ("upgrade_remote_rustdesk_client_to_{}_tip", "Por favor, actualiza el cliente RustDesk a la versión {} o superior en el lado remoto"),

@@ -416,7 +416,8 @@ class _GeneralState extends State<_General> {
       controller: scrollController,
       children: [
         if (!isWeb) service(),
-        theme(),
+        // Remotium: marca solo-oscura. Se oculta la seccion Tema (dark forzado por defecto).
+        // theme(),
         _Card(title: 'Language', children: [language()]),
         if (!isWeb) hwcodec(),
         if (!isWeb) audio(context),
@@ -427,31 +428,9 @@ class _GeneralState extends State<_General> {
     ).marginOnly(bottom: _kListViewBottomMargin);
   }
 
+  // Remotium: marca solo-oscura. Seccion Tema deshabilitada (dark forzado por defecto).
   Widget theme() {
-    final current = MyTheme.getThemeModePreference().toShortString();
-    onChanged(String value) async {
-      await MyTheme.changeDarkMode(MyTheme.themeModeFromString(value));
-      setState(() {});
-    }
-
-    final isOptFixed = isOptionFixed(kCommConfKeyTheme);
-    return _Card(title: 'Theme', children: [
-      _Radio<String>(context,
-          value: 'light',
-          groupValue: current,
-          label: 'Light',
-          onChanged: isOptFixed ? null : onChanged),
-      _Radio<String>(context,
-          value: 'dark',
-          groupValue: current,
-          label: 'Dark',
-          onChanged: isOptFixed ? null : onChanged),
-      _Radio<String>(context,
-          value: 'system',
-          groupValue: current,
-          label: 'Follow System',
-          onChanged: isOptFixed ? null : onChanged),
-    ]);
+    return const Offstage();
   }
 
   Widget service() {
@@ -2448,7 +2427,7 @@ class _AboutState extends State<_About> {
                         .marginSymmetric(vertical: 4.0)),
               InkWell(
                   onTap: () {
-                    launchUrlString('https://rustdesk.com/privacy.html');
+                    launchUrlString('https://www.remotium.net/privacidad.html');
                   },
                   child: Text(
                     translate('Privacy Statement'),
@@ -2456,7 +2435,7 @@ class _AboutState extends State<_About> {
                   ).marginSymmetric(vertical: 4.0)),
               InkWell(
                   onTap: () {
-                    launchUrlString('https://rustdesk.com');
+                    launchUrlString('https://www.remotium.net');
                   },
                   child: Text(
                     translate('Website'),

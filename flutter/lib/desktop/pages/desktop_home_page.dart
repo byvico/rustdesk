@@ -10,6 +10,7 @@ import 'package:flutter_hbb/common/widgets/animated_rotation_widget.dart';
 import 'package:flutter_hbb/common/widgets/custom_password.dart';
 import 'package:flutter_hbb/consts.dart';
 import 'package:flutter_hbb/desktop/pages/connection_page.dart';
+import 'package:flutter_hbb/common/widgets/peer_tab_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_setting_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
 import 'package:flutter_hbb/models/peer_tab_model.dart';
@@ -66,11 +67,42 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSidebar(context),
-        buildLeftPane(context),
-        if (!isIncomingOnly) const VerticalDivider(width: 1),
-        if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
+        // isIncomingOnly (solo ser controlado) conserva el panel clasico.
+        if (isIncomingOnly)
+          buildLeftPane(context)
+        // Caso normal/outgoing: una sola columna estilo mockup.
+        else
+          Expanded(child: _buildMainColumn(context)),
       ],
     ));
+  }
+
+  // Columna principal del mockup: dos tarjetas arriba + cuadricula a lo ancho abajo.
+  Widget _buildMainColumn(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: _buildEsteEquipoCard(context)),
+                const SizedBox(width: 18),
+                const Expanded(child: ConnectIdCard()),
+              ],
+            ),
+          ),
+          // Banner instalar/permisos/actualizacion (altura natural, sin scroll).
+          Obx(() => buildHelpCards(stateGlobal.updateUrl.value)),
+          const SizedBox(height: 12),
+          // PeerTabPage EXIGE un Expanded (termina en Expanded internamente).
+          Expanded(child: PeerTabPage()),
+        ],
+      ),
+    );
   }
 
   // Barra lateral Remotium (rediseño).
@@ -343,7 +375,6 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final labelColor =
         Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.6);
     return Container(
-      margin: const EdgeInsets.fromLTRB(12, 10, 12, 8),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
