@@ -336,8 +336,6 @@ class MainService : Service() {
         Log.d("whichService", "this service: ${Thread.currentThread()}")
         super.onStartCommand(intent, flags, startId)
         if (intent?.action == ACT_INIT_MEDIA_PROJECTION_AND_SERVICE) {
-            createForegroundNotification()
-
             if (intent.getBooleanExtra(EXT_INIT_FROM_BOOT, false)) {
                 FFI.startService()
             }
@@ -351,6 +349,9 @@ class MainService : Service() {
                 // Register the callback BEFORE createVirtualDisplay() — required on Android 14+/API 35,
                 // otherwise createVirtualDisplay throws and screen capture never yields an image.
                 mediaProjection?.registerCallback(mediaProjectionCallback, serviceHandler)
+                // Start the foreground service AFTER obtaining the MediaProjection so the
+                // mediaProjection FGS type is permitted on Android 14+/API 35.
+                createForegroundNotification()
                 checkMediaPermission()
                 _isReady = true
             } ?: let {
@@ -654,7 +655,15 @@ class MainService : Service() {
             .setColor(ContextCompat.getColor(this, R.color.primary))
             .setWhen(System.currentTimeMillis())
             .build()
-        startForeground(DEFAULT_NOTIFY_ID, notification)
+        try {
+            startForeground(DEFAULT_NOTIFY_ID, notification)
+        } catch (e: Exception) {
+            // On Android 14+/API 35 startForeground with the manifest mediaProjection FGS type
+            // throws SecurityException until the MediaProjection consent (appop android:project_media)
+            // is active. The service is created (bindService) before consent; the real foreground
+            // start happens from onStartCommand right after getMediaProjection(). Don't crash here.
+            Log.w(logTag, "startForeground deferred until media projection consent: $e")
+        }
     }
 
     private fun loginRequestNotification(
