@@ -336,6 +336,11 @@ class MainService : Service() {
         Log.d("whichService", "this service: ${Thread.currentThread()}")
         super.onStartCommand(intent, flags, startId)
         if (intent?.action == ACT_INIT_MEDIA_PROJECTION_AND_SERVICE) {
+            // Make the service a mediaProjection foreground service BEFORE getMediaProjection().
+            // The consent (appop android:project_media) is already granted by
+            // PermissionRequestTransparentActivity, so startForeground succeeds here, and Android 15
+            // requires the FGS to already be mediaProjection type when getMediaProjection() runs.
+            createForegroundNotification()
             if (intent.getBooleanExtra(EXT_INIT_FROM_BOOT, false)) {
                 FFI.startService()
             }
@@ -349,9 +354,6 @@ class MainService : Service() {
                 // Register the callback BEFORE createVirtualDisplay() — required on Android 14+/API 35,
                 // otherwise createVirtualDisplay throws and screen capture never yields an image.
                 mediaProjection?.registerCallback(mediaProjectionCallback, serviceHandler)
-                // Start the foreground service AFTER obtaining the MediaProjection so the
-                // mediaProjection FGS type is permitted on Android 14+/API 35.
-                createForegroundNotification()
                 checkMediaPermission()
                 _isReady = true
             } ?: let {
