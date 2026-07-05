@@ -214,6 +214,15 @@ class MainService : Service() {
 
     // video
     private var mediaProjection: MediaProjection? = null
+    // Android 14+ (API 34/35) requires a MediaProjection.Callback to be registered before
+    // createVirtualDisplay(); without it the call throws and no video frames are produced
+    // (remote side stuck on "waiting for image"). Required once we target SDK 35 (Android 15).
+    private val mediaProjectionCallback = object : MediaProjection.Callback() {
+        override fun onStop() {
+            super.onStop()
+            Log.d(logTag, "MediaProjection.Callback onStop")
+        }
+    }
     private var surface: Surface? = null
     private val sendVP9Thread = Executors.newSingleThreadExecutor()
     private var videoEncoder: MediaCodec? = null
@@ -339,6 +348,9 @@ class MainService : Service() {
             intent.getParcelableExtra<Intent>(EXT_MEDIA_PROJECTION_RES_INTENT)?.let {
                 mediaProjection =
                     mediaProjectionManager.getMediaProjection(Activity.RESULT_OK, it)
+                // Register the callback BEFORE createVirtualDisplay() — required on Android 14+/API 35,
+                // otherwise createVirtualDisplay throws and screen capture never yields an image.
+                mediaProjection?.registerCallback(mediaProjectionCallback, serviceHandler)
                 checkMediaPermission()
                 _isReady = true
             } ?: let {
