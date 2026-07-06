@@ -356,6 +356,26 @@ class MainService : Service() {
                 mediaProjection?.registerCallback(mediaProjectionCallback, serviceHandler)
                 checkMediaPermission()
                 _isReady = true
+                // Android 14+/API 35 fix: the MediaProjection token is invalidated if the
+                // first createVirtualDisplay() is deferred until a peer connects. Symptom:
+                // "App passed invalid MediaProjection token" + SecurityException in
+                // createOrSetVirtualDisplay -> screen stuck forever at "waiting for image".
+                // Prime the VirtualDisplay NOW (surfaceless) while the token is fresh; because
+                // reuseVirtualDisplay=true (SDK>33), later connections only setSurface() on it.
+                if (reuseVirtualDisplay && virtualDisplay == null) {
+                    try {
+                        updateScreenInfo(resources.configuration.orientation)
+                        virtualDisplay = mediaProjection?.createVirtualDisplay(
+                            "RustDeskVD",
+                            SCREEN_INFO.width, SCREEN_INFO.height, SCREEN_INFO.dpi,
+                            VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                            null, null, null
+                        )
+                        Log.d(logTag, "Primed virtualDisplay while token fresh: ${virtualDisplay != null}")
+                    } catch (e: Exception) {
+                        Log.w(logTag, "prime virtualDisplay failed (token likely limited/invalid): $e")
+                    }
+                }
             } ?: let {
                 Log.d(logTag, "getParcelableExtra intent null, invoke requestMediaProjection")
                 requestMediaProjection()
@@ -561,7 +581,7 @@ class MainService : Service() {
                 )
             }
         } catch (e: SecurityException) {
-            Log.w(logTag, "createOrSetVirtualDisplay: got SecurityException, re-requesting confirmation");
+            Log.w(logTag, "createOrSetVirtualDisplay: got SecurityException: ${e.message}", e)
             // This initiates a prompt dialog for the user to confirm screen projection.
             requestMediaProjection()
         }
